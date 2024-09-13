@@ -107,7 +107,9 @@ def create_argparser():
     parser.add_argument(
         "-mr",
         "--modify-routes",
-        help="Specify json filepath with list of ip_networks for routing"
+        type=str(),
+        help="Specify json filepath with list of ip_networks for routing",
+        default=''
     )
 
     parser.add_argument(
