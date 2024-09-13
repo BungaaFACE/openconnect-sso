@@ -9,7 +9,7 @@ to Cisco SSL-VPNs
 ## Installation
 
 ###
-`pip install git+https://github.com/BungaaFACE/openconnect-sso@pathced`
+`pip install git+https://github.com/BungaaFACE/openconnect-sso@patched`
 
 ### Using pip/pipx
 
