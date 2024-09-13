@@ -9,7 +9,7 @@ def get_requested_routes(filepath, logger) -> list[str]:
     with open(filepath) as routes_file:
         route_list = json.load(routes_file)
     
-    for ind in range(route_list):
+    for ind in range(len(route_list)):
         try:
             route_list[ind] = ip_network(route_list[ind])
         except Exception as e:
