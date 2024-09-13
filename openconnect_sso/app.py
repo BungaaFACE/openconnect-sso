@@ -79,7 +79,7 @@ def run(args):
             selected_profile,
             args.proxy,
             args.ac_version,
-            args.modify_routing,
+            args.modify_routes,
             args.openconnect_args,
         )
     except KeyboardInterrupt:
