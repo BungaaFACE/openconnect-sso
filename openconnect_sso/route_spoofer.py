@@ -78,7 +78,7 @@ def spoof_routes(logger, routes_filepath):
         else:
             logger.warning(f'Unknown system "{system_name}" for customizing vpnc-script')
             return
-        mod_script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vpnc-script')
+        mod_script_path = os.path.join("tmp", 'vpnc-script')
         shutil.copyfile(src_script_path, mod_script_path)
         mod_darwin_scriptfile(mod_script_path, routes_filepath, logger)
     return mod_script_path
