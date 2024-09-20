@@ -46,7 +46,7 @@ def mod_win_scriptfile(script_path, routes_filepath, logger):
     return True
 
 def mod_darwin_scriptfile(script_path, routes_filepath, logger):
-    add_test = 'CISCO_SPLIT_EXC = 0\nREDIRECT_GATEWAY_METHOD=0\n'
+    add_test = 'CISCO_SPLIT_EXC=0\nREDIRECT_GATEWAY_METHOD=0\n'
 
     for i, net in enumerate(get_requested_routes(routes_filepath, logger)):
         add_test += f'CISCO_SPLIT_INC_{i}_ADDR={net.network_address}\n'
@@ -78,7 +78,8 @@ def spoof_routes(logger, routes_filepath):
         else:
             logger.warning(f'Unknown system "{system_name}" for customizing vpnc-script')
             return
-        mod_script_path = os.path.join("tmp", 'vpnc-script')
+        mod_script_path = os.path.join('/', 'tmp', 'vpnc-script')
         shutil.copyfile(src_script_path, mod_script_path)
+        os.chmod(mod_script_path, mode=0o755)
         mod_darwin_scriptfile(mod_script_path, routes_filepath, logger)
     return mod_script_path
