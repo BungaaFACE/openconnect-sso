@@ -18,8 +18,10 @@ from openconnect_sso.authenticator import Authenticator, AuthResponseError
 from openconnect_sso.browser import Terminated
 from openconnect_sso.config import Credentials
 from openconnect_sso.profile import get_profiles
+from openconnect_sso.route_spoofer import spoof_routes
 
 from requests.exceptions import HTTPError
+
 
 logger = structlog.get_logger()
 
@@ -77,6 +79,7 @@ def run(args):
             selected_profile,
             args.proxy,
             args.ac_version,
+            args.modify_routes,
             args.openconnect_args,
         )
     except KeyboardInterrupt:
@@ -183,7 +186,7 @@ def authenticate_to(host, proxy, credentials, display_mode, version):
     return Authenticator(host, proxy, credentials, version).authenticate(display_mode)
 
 
-def run_openconnect(auth_info, host, proxy, version, args):
+def run_openconnect(auth_info, host, proxy, version, modify_routes, args):
     as_root = next(([prog] for prog in ("doas", "sudo") if shutil.which(prog)), [])
     try:
         if not as_root:
@@ -200,6 +203,11 @@ def run_openconnect(auth_info, host, proxy, version, args):
         )
         return 20
 
+    if modify_routes:
+        script_path = spoof_routes(logger, modify_routes)
+    else:
+        script_path = None
+
     command_line = as_root + [
         "openconnect",
         "--useragent",
@@ -212,6 +220,8 @@ def run_openconnect(auth_info, host, proxy, version, args):
         *args,
         host.vpn_url,
     ]
+    if script_path:
+        command_line.append(f"--script={script_path}")
     if proxy:
         command_line.extend(["--proxy", proxy])
 

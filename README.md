@@ -8,6 +8,9 @@ to Cisco SSL-VPNs
 
 ## Installation
 
+###
+`pip install git+https://github.com/BungaaFACE/openconnect-sso@patched`
+
 ### Using pip/pipx
 
 A generic way that works on most 'standard' Linux distributions out of the box.

@@ -105,6 +105,14 @@ def create_argparser():
     )
 
     parser.add_argument(
+        "-mr",
+        "--modify-routes",
+        type=str,
+        help="Specify json filepath with list of ip_networks for routing",
+        default=''
+    )
+
+    parser.add_argument(
         "openconnect_args",
         help="Arguments passed to openconnect",
         action=StoreOpenConnectArgs,
@@ -171,6 +179,12 @@ def main():
         parser.error(
             "No AnyConnect profile can be found. --profile argument is required."
         )
+    
+    if args.modify_routes and not os.path.isfile(args.modify_routes):
+        parser.error(
+            f"File with networks for modify routing not found. Checked {args.modify_routes}"
+        )
+
 
     return app.run(args)
 
