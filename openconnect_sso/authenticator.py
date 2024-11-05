@@ -110,18 +110,23 @@ class AllowLegacyRenegotionAdapter(adapters.HTTPAdapter):
       legacy renegotiation disabled (_ssl.c:992)')
 
     """
-
-    def init_poolmanager(self, connections, maxsize, block=False):
+    def __init__(self, *args, **kwargs):
         ctx = urllib3.util.ssl_.create_urllib3_context()
         ctx.load_default_certs()
-        ctx.options |= 0x4  # ssl.OP_LEGACY_SERVER_CONNECT
+        ctx.check_hostname = False
+        ctx.options |= 0x4 # ssl.Options.OP_LEGACY_SERVER_CONNECT
+        # ctx.options |= ssl.Options.OP_NO_RENEGOTIATION
+        self.ssl_context = ctx
+        super().__init__(*args, **kwargs)
 
-        self.poolmanager = urllib3.PoolManager(
-            ssl_context=ctx,
-            num_pools=connections,
-            maxsize=maxsize,
-            block=block,
-        )
+    def init_poolmanager(self, *args, **kwargs):
+        kwargs["ssl_context"] = self.ssl_context
+        return super().init_poolmanager(*args, **kwargs)
+    
+    def proxy_manager_for(self, *args, **kwargs):
+        # if your system using proxy - then you need to override ssl_context for this too
+        kwargs["ssl_context"] = self.ssl_context
+        return super().proxy_manager_for(*args, **kwargs)
 
 
 def create_http_session(proxy, version):
