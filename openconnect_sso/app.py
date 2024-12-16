@@ -187,15 +187,16 @@ def authenticate_to(host, proxy, credentials, display_mode, version):
 
 
 def run_openconnect(auth_info, host, proxy, version, modify_routes, args):
-    as_root = next(([prog] for prog in ("doas", "sudo") if shutil.which(prog)), [])
     try:
-        if not as_root:
-            if os.name == "nt":
-                import ctypes
+        if os.name == "nt":
+            import ctypes
 
-                if not ctypes.windll.shell32.IsUserAnAdmin():
-                    raise PermissionError
-            else:
+            if not ctypes.windll.shell32.IsUserAnAdmin():
+                raise PermissionError
+            as_root = []
+        else:
+            as_root = next(([prog] for prog in ("doas", "sudo") if shutil.which(prog)), [])
+            if not as_root:
                 raise PermissionError
     except PermissionError:
         logger.error(
