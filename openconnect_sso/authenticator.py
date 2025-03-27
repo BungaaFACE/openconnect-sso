@@ -3,6 +3,7 @@ import requests
 import structlog
 from lxml import etree, objectify
 from requests import adapters
+from urllib.parse import urlsplit
 import urllib3
 import os.path as path
 
@@ -90,7 +91,9 @@ class Authenticator:
         request = open(hostsscan_filepath).read()
         logger.debug("Sending CSD request", content=request)
         self.session.cookies.set("sdesktop", auth_request_response.host_scan_token)
-        response = self.session.post(self.host.vpn_url + "+CSCOE+/sdesktop/scan.xml?reusebrowser=1", request)
+        splitted_vpn_url = urlsplit(self.host.vpn_url)
+        base_url = f"{splitted_vpn_url.scheme}{"://" if splitted_vpn_url.scheme else ''}{splitted_vpn_url.netloc}"
+        response = self.session.post(base_url + "/+CSCOE+/sdesktop/scan.xml?reusebrowser=1", request)
         logger.debug("CSD response received", content=response.content)
 
     def _complete_authentication(self, auth_request_response, sso_token):
