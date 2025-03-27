@@ -4,6 +4,7 @@ import structlog
 from lxml import etree, objectify
 from requests import adapters
 import urllib3
+import os.path as path
 
 from openconnect_sso.saml_authenticator import authenticate_in_browser
 
@@ -85,7 +86,8 @@ class Authenticator:
         )
 
     def _complete_csd(self, auth_request_response):
-        request = open("hostscan-data").read();
+        hostsscan_filepath = path.join(path.dirname(path.abspath(__file__)), "hostscan-data")
+        request = open(hostsscan_filepath).read()
         logger.debug("Sending CSD request", content=request)
         self.session.cookies.set("sdesktop", auth_request_response.host_scan_token)
         response = self.session.post(self.host.vpn_url + "+CSCOE+/sdesktop/scan.xml?reusebrowser=1", request)
